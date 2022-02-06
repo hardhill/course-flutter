@@ -23,7 +23,15 @@ class MyHomePage extends StatelessWidget{
       appBar: AppBar(
         title: Text("Course app"),
       ),
+      body: _bodyPage(),
     );
+  }
+
+}
+class _bodyPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView();
   }
 
 }
