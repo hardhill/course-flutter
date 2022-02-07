@@ -22,16 +22,26 @@ class MyHomePage extends StatelessWidget{
     return Scaffold(
       appBar: AppBar(
         title: Text("Course app"),
+        centerTitle: true,
       ),
       body: _bodyPage(),
     );
   }
 
 }
-class _bodyPage extends StatelessWidget {
+class _bodyPage extends StatefulWidget {
+  @override
+  State<_bodyPage> createState() => _bodyPageState();
+}
+
+class _bodyPageState extends State<_bodyPage> {
   @override
   Widget build(BuildContext context) {
-    return ListView();
+    return ListView(
+      padding: EdgeInsets.all(16),
+      children: [
+        TextFormField(),
+      ],
+    );
   }
-
 }
