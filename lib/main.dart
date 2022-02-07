@@ -40,7 +40,22 @@ class _bodyPageState extends State<_bodyPage> {
     return ListView(
       padding: EdgeInsets.all(16),
       children: [
-        TextFormField(),
+        TextField(
+          decoration: InputDecoration(labelText: "Label text"),
+        ),
+        SizedBox(height: 10,),
+        TextFormField(decoration: InputDecoration(labelText: "Phone number"),),
+        SizedBox(height: 10,),
+        TextFormField(decoration: InputDecoration(labelText: "Email adress"),),
+        SizedBox(height: 10,),
+        TextFormField(decoration: InputDecoration(labelText: "Life story"),),
+        SizedBox(height: 10,),
+        TextFormField(decoration: InputDecoration(labelText: "Password"),),
+        SizedBox(height: 10,),
+        TextFormField(decoration: InputDecoration(labelText: "Confirm Password"),),
+        SizedBox(height: 10,),
+        ElevatedButton(onPressed: (){},
+            child: Text("Submit Form"))
       ],
     );
   }
