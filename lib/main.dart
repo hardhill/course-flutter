@@ -45,6 +45,10 @@ class _bodyPageState extends State<_bodyPage> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+ // final _scaffKey = GlobalKey<ScaffoldState>();
+
+  List<String> _countries = ['Russia', 'Germany', 'France', 'Italy'];
+  late String _selectedCountry;
   @override
   void dispose() {
     _nameController.dispose();
@@ -55,6 +59,7 @@ class _bodyPageState extends State<_bodyPage> {
     _confirmController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -102,8 +107,12 @@ class _bodyPageState extends State<_bodyPage> {
                     borderSide: BorderSide(),
                     borderRadius: BorderRadius.circular(20))),
             keyboardType: TextInputType.phone,
-            inputFormatters: [FilteringTextInputFormatter(RegExp(r"^[()\d -]{1,15}$"), allow: true)],
-            validator: (value)=>_phoneNumberValidator(value!)?null:"Phone form incorrect",
+            inputFormatters: [
+              FilteringTextInputFormatter(RegExp(r"^[()\d -]{1,15}$"),
+                  allow: true)
+            ],
+            validator: (value) =>
+                _phoneNumberValidator(value!) ? null : "Phone form incorrect",
           ),
           SizedBox(
             height: 10,
@@ -116,6 +125,27 @@ class _bodyPageState extends State<_bodyPage> {
               icon: Icon(Icons.mail),
             ),
             keyboardType: TextInputType.emailAddress,
+            validator: _validateEmail,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          DropdownButtonFormField(
+            items: _countries.map((element) {
+              return DropdownMenuItem(
+                child: Text(element),
+                value: element,
+              );
+            }).toList(),
+            onChanged: (data){ setState(() {
+              print(data);
+              _selectedCountry = data.toString();
+            });},
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                icon: Icon(Icons.golf_course),
+                labelText: "Country?"),
+            value: _selectedCountry,
           ),
           SizedBox(
             height: 10,
@@ -128,9 +158,7 @@ class _bodyPageState extends State<_bodyPage> {
                 helperText: "Keep it short. This is a demo",
                 border: OutlineInputBorder()),
             maxLines: 3,
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(100)
-            ],
+            inputFormatters: [LengthLimitingTextInputFormatter(100)],
           ),
           SizedBox(
             height: 10,
@@ -144,13 +172,15 @@ class _bodyPageState extends State<_bodyPage> {
                 hintText: "Enter the password",
                 icon: Icon(Icons.security),
                 suffixIcon: IconButton(
-                  icon: Icon(_hidePass ? Icons.visibility : Icons.visibility_off),
+                  icon:
+                      Icon(_hidePass ? Icons.visibility : Icons.visibility_off),
                   onPressed: () {
                     setState(() {
                       _hidePass = !_hidePass;
                     });
                   },
                 )),
+            validator: _validatePassword,
           ),
           SizedBox(
             height: 10,
@@ -164,6 +194,7 @@ class _bodyPageState extends State<_bodyPage> {
               hintText: "Confirm the password",
               icon: Icon(Icons.border_color),
             ),
+            validator: _validatePassword,
           ),
           SizedBox(
             height: 10,
@@ -173,24 +204,52 @@ class _bodyPageState extends State<_bodyPage> {
       ),
     );
   }
-  void _submitForm(){
-    if(_formKey.currentState!.validate()){
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
       print("Name ${_nameController.text}");
       print("Phone ${_phoneController.text}");
+    } else {
+      _showMessage(message:"Form is not valid");
     }
   }
-  String? _validateName(String? value){
+  void _showMessage({String? message}){
+
+  }
+  String? _validateName(String? value) {
     final _nameExp = RegExp(r"^[A-Za-z ]+$");
-    if(value!.isEmpty){
+    if (value!.isEmpty) {
       return "Name is required";
-    }else if(!_nameExp.hasMatch(value)){
+    } else if (!_nameExp.hasMatch(value)) {
       return "Please input alphabetical characters";
-    } else{
+    } else {
       return null;
     }
   }
-  bool _phoneNumberValidator(String input){
+
+  bool _phoneNumberValidator(String input) {
     final _phoneExp = RegExp(r"^\(\d\d\d\)\d\d\d\-\d\d\d\d$");
     return _phoneExp.hasMatch(input);
+  }
+
+  String? _validateEmail(String? value) {
+    if (value!.isEmpty) {
+      return 'Email cannot be empry';
+    } else if (!_emailController.text.contains("@")) {
+      return "Invalid email addres";
+    } else {
+      return null;
+    }
+  }
+
+  String? _validatePassword(String? value) {
+    if (value!.isEmpty) {
+      return "Password is empty";
+    } else if (value.length < 8) {
+      return "Password less then 8 characters";
+    } else if (_passwordController.text == _confirmController.text) {
+      return null;
+    }
   }
 }
