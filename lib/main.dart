@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:forms/models/user.dart';
+import 'package:forms/pages/user_info_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,7 +50,9 @@ class _bodyPageState extends State<_bodyPage> {
  // final _scaffKey = GlobalKey<ScaffoldState>();
 
   List<String> _countries = ['Russia', 'Germany', 'France', 'Italy'];
-  late String _selectedCountry;
+  late String _selectedCountry = "Russia";
+
+  User newUser = new User();
   @override
   void dispose() {
     _nameController.dispose();
@@ -85,6 +89,7 @@ class _bodyPageState extends State<_bodyPage> {
                   borderSide: BorderSide(color: Colors.blueAccent)),
             ),
             validator: _validateName,
+            onSaved: (data)=>newUser.name = data.toString(),
           ),
           SizedBox(
             height: 10,
@@ -113,6 +118,7 @@ class _bodyPageState extends State<_bodyPage> {
             ],
             validator: (value) =>
                 _phoneNumberValidator(value!) ? null : "Phone form incorrect",
+            onSaved: (data)=>newUser.phone = data.toString(),
           ),
           SizedBox(
             height: 10,
@@ -126,6 +132,7 @@ class _bodyPageState extends State<_bodyPage> {
             ),
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
+            onSaved: (data)=>newUser.email = data!,
           ),
           SizedBox(
             height: 10,
@@ -138,8 +145,9 @@ class _bodyPageState extends State<_bodyPage> {
               );
             }).toList(),
             onChanged: (data){ setState(() {
-              print(data);
+
               _selectedCountry = data.toString();
+              newUser.country = _selectedCountry;
             });},
             decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -159,6 +167,7 @@ class _bodyPageState extends State<_bodyPage> {
                 border: OutlineInputBorder()),
             maxLines: 3,
             inputFormatters: [LengthLimitingTextInputFormatter(100)],
+            onSaved: (data)=>newUser.story = data.toString(),
           ),
           SizedBox(
             height: 10,
@@ -208,8 +217,7 @@ class _bodyPageState extends State<_bodyPage> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      print("Name ${_nameController.text}");
-      print("Phone ${_phoneController.text}");
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserInfoPage(userInfo:newUser)));
     } else {
       _showMessage(message:"Form is not valid");
     }
